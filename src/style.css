@@ -1,0 +1,20 @@
+*{
+  margin: 0;
+  padding: 0;
+}
+
+
+:root{
+  --fondonavbar:hsl(35, 80%, 55%);
+  --fondo:hsl(35, 80%, 60%);
+  --fondoclicado:hsl(35, 84%, 40%);
+  --fondooscuroclicado:hsl(220, 70%, 30%);
+  --fondooscuro:hsl(220, 50%, 20%);
+  --fondonavbaroscuro:hsl(220, 50%, 40%);
+}
+
+#contenedor{
+  display: flex;
+  background-color: var(--fondo);
+  justify-content: space-evenly;
+}
