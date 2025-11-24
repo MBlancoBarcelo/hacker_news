@@ -14,7 +14,21 @@
 }
 
 #contenedor{
+  height: 10vh;
   display: flex;
   background-color: var(--fondo);
   justify-content: space-evenly;
+  align-items: center;
+}
+
+.botones{
+  height: 5vh;
+  width: 25%;
+  border: none;
+  border-radius: 4pc;
+  background-color: var(--fondonavbar);
+}
+
+.activado {
+  background-color: var(--fondoclicado);
 }
