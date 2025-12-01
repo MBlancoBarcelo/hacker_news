@@ -21,6 +21,16 @@
   align-items: center;
 }
 
+#stories{
+  display: flex;
+  flex-direction: column;
+}
+
+#anteriorsiguiente{
+  display: flex;
+  justify-content: space-evenly;
+}
+
 .botones{
   height: 5vh;
   width: 25%;
@@ -31,4 +41,8 @@
 
 .activado {
   background-color: var(--fondoclicado);
+}
+
+.story{
+  background-color: aqua;
 }
