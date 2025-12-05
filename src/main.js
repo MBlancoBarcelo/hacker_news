@@ -6,6 +6,7 @@ const siguiente = document.querySelector("#siguiente")
 const numeropagina = document.querySelector("#pagina")
 //const radiobotones = document.querySelector("#radiobotones")
 let contador = 0;
+let contador2 = 3;
 let pagina = 1;
 let selectType = "topstories";
 /*
@@ -89,9 +90,12 @@ async function ponerHistorias() {
   noticias.forEach((noticia,i) => {
     const autorInfo = autores[i]
 
+    console.log(noticia)
 
     const div = document.createElement("div")
     div.classList.add("story")
+
+
 
     const score = document.createElement("p");
     score.textContent = `Score: ${noticia.score}`;
@@ -105,7 +109,14 @@ async function ponerHistorias() {
 
 
     const skibidi = document.createElement("p")
-    skibidi.textContent = "Numero Comentarios: " + noticia.kids.length
+    skibidi.textContent = "Numero Comentarios: " + (noticia.kids?.length || 0)
+    skibidi.addEventListener("click",() => {
+      ponerComentarios(noticia.kids)
+    })
+
+    const time = document.createElement("p");
+
+    time.textContent = "Time " + formaterTime(noticia.time)
 
     console.log(skibidi)
 
@@ -113,10 +124,56 @@ async function ponerHistorias() {
     div.appendChild(score)
     div.appendChild(autor)
     div.appendChild(skibidi)  
+    div.appendChild(time)
   
 
     stories.appendChild(div)
   })
 
+}
+
+function formaterTime(time){
+  let date = new Date(time * 1000)
+  let hours = date.getHours()
+  let minutes =  date.getMinutes();
+  let formatedTime = hours + ":" + minutes
+  return formatedTime
+}
+
+async function ponerComentarios(kids) {
+  let comentariosIds = [];
+  for (let index = 0; index < contador2; index++) {
+    const element = kids[index];
+    comentariosIds.push(element)
+  }
+
+  stories.textContent=""
+
+  const comentarios = await Promise.all(
+    comentariosIds.map(id => fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`).then(response => response.json())
+  ))
+
+  comentarios.forEach((comentario,i) => {
+    const div = document.createElement("div")
+    div.classList.add("story")
+    const p = document.createElement("p")
+    p.textContent = comentario.text
+
+    div.textContent = comentario.by
+
+    div.appendChild(p)
+
+    stories.appendChild(div)
+  })
+
+  let button = document.createElement("button")
+  button.textContent = "More"
+
+  button.addEventListener("click", () => {
+    contador2 = contador2 + 3
+    ponerComentarios(kids)
+  })
+
+  stories.appendChild(button)
 }
   

@@ -44,6 +44,6 @@
 }
 
 .story{
-
+  display: flex;
   background-color: aqua;
 }
