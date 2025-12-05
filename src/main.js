@@ -4,11 +4,12 @@ const cosarara = document.querySelector("#prueba")
 const anterior = document.querySelector("#anterior")
 const siguiente = document.querySelector("#siguiente")
 const numeropagina = document.querySelector("#pagina")
+const lila = document.querySelector("#anteriorsiguiente")
 //const radiobotones = document.querySelector("#radiobotones")
 let contador = 0;
 let contador2 = 3;
 let pagina = 1;
-let selectType = "topstories";
+let selectType = loadLocalSelect();
 /*
 radiobotones.forEach((element) , () => {
   element.addEventListener("click" , (element) => {
@@ -17,6 +18,18 @@ radiobotones.forEach((element) , () => {
 })
 */
 numeropagina.textContent = pagina;
+
+function pressButon() {
+  let botoninstorage = localStorage.getItem("selecttype")
+
+  botones.forEach((element) => {
+    let botontopress = pickType(element.textContent)
+    if (botoninstorage == botontopress) {
+      element.classList.add("activado")
+    }
+  })
+}
+
 botones.forEach((element) => {
   element.addEventListener("click", () => {
     botones.forEach((element) => {
@@ -24,6 +37,7 @@ botones.forEach((element) => {
     })
     element.classList.add("activado")
     selectType = pickType( element.textContent);
+    localStorage.setItem("selecttype",selectType)
     ponerHistorias()
   })
 })
@@ -39,7 +53,7 @@ function pickType(element) {
   }
 }
 
-
+pressButon()
 ponerHistorias()
 
 siguiente.addEventListener(("click"),() => {
@@ -95,7 +109,7 @@ async function ponerHistorias() {
     const div = document.createElement("div")
     div.classList.add("story")
 
-
+    
 
     const score = document.createElement("p");
     score.textContent = `Score: ${noticia.score}`;
@@ -111,7 +125,7 @@ async function ponerHistorias() {
     const skibidi = document.createElement("p")
     skibidi.textContent = "Numero Comentarios: " + (noticia.kids?.length || 0)
     skibidi.addEventListener("click",() => {
-      ponerComentarios(noticia.kids)
+      ponerComentarios(noticia.title,noticia.kids)
     })
 
     const time = document.createElement("p");
@@ -135,12 +149,15 @@ async function ponerHistorias() {
 function formaterTime(time){
   let date = new Date(time * 1000)
   let hours = date.getHours()
-  let minutes =  date.getMinutes();
-  let formatedTime = hours + ":" + minutes
+  let minutes =  "0" + date.getMinutes();
+  let formatedTime = hours + ":" + minutes.slice(-2)
   return formatedTime
 }
 
-async function ponerComentarios(kids) {
+async function ponerComentarios(noticia,kids) {
+  if (kids === undefined|| kids === 0){
+    return
+  }
   let comentariosIds = [];
   for (let index = 0; index < contador2; index++) {
     const element = kids[index];
@@ -149,6 +166,11 @@ async function ponerComentarios(kids) {
 
   stories.textContent=""
 
+  const texto = document.createElement("div")
+  texto.textContent = noticia
+
+  stories.appendChild(texto)
+
   const comentarios = await Promise.all(
     comentariosIds.map(id => fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`).then(response => response.json())
   ))
@@ -156,13 +178,19 @@ async function ponerComentarios(kids) {
   comentarios.forEach((comentario,i) => {
     const div = document.createElement("div")
     div.classList.add("story")
+    div.textContent = comentario.by
     const p = document.createElement("p")
     p.textContent = comentario.text
-
-    div.textContent = comentario.by
+    const a = document.createElement("p")
+    a.textContent = "Numero Comentarios: " + (comentario.kids?.length || 0)
+    a.addEventListener(("click") ,() => {
+      ponerComentarios(comentario.text,comentario.kids)
+    })
+    
+    
 
     div.appendChild(p)
-
+    div.appendChild(a)
     stories.appendChild(div)
   })
 
@@ -171,9 +199,17 @@ async function ponerComentarios(kids) {
 
   button.addEventListener("click", () => {
     contador2 = contador2 + 3
-    ponerComentarios(kids)
+    ponerComentarios(noticia,kids)
   })
 
+  
+
   stories.appendChild(button)
+}
+
+function loadLocalSelect(){
+  let aaa = localStorage.getItem("selecttype")
+
+  return aaa
 }
   
