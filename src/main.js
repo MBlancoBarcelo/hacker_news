@@ -59,39 +59,18 @@ anterior.addEventListener(("click"),() => {
 
 
 async function pillarHistorias() {
-  return fetch(`https://hacker-news.firebaseio.com/v0/${selectType}.json`).then(response => response.json()).then((data) => {
-    console.log(data)
-    return data;
-  })
+  const response = await fetch(`https://hacker-news.firebaseio.com/v0/${selectType}.json`)
+  return await response.json()
 }
 
 
 
-
-function ponerHistorias() {
+async function ponerHistorias() {
   stories.textContent = ""
-  let arraydeid = []
-  pillarHistorias().then(data => {
-    let prueba = contador
-    let numero = contador + 10;
+  
+  const ids = await pillarHistorias()
+  console.log(ids)
 
-    for (let i = prueba; prueba < numero; prueba++) {
-      const element = data[prueba];
-      arraydeid.push(element)
-    }
-    console.log(arraydeid)
-    arraydeid.forEach(element => {
-      fetch(`https://hacker-news.firebaseio.com/v0/item/${element}.json`).then(response => response.json())
-        .then((data) => {
-          let a = document.createElement("a")
-          let div = document.createElement("div")
-          a.textContent =data.title;
-          a.setAttribute('href',data.url)
-          div.classList.add("story")
-          div.appendChild(a)
-          stories.appendChild(div)
-        })
-    });
-
-  })
+  
 }
+  
