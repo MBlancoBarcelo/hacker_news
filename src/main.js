@@ -45,7 +45,6 @@ siguiente.addEventListener(("click"),() => {
   pagina++;
   numeropagina.textContent = pagina; 
   contador += 10
-  console.log(contador)
   ponerHistorias()
 })
 
@@ -53,7 +52,6 @@ anterior.addEventListener(("click"),() => {
       contador = contador - 10;
       pagina--;
       numeropagina.textContent = pagina 
-      console.log(contador - 10)
   ponerHistorias()
 })
 
@@ -69,8 +67,56 @@ async function ponerHistorias() {
   stories.textContent = ""
   
   const ids = await pillarHistorias()
-  console.log(ids)
-
   
+  const numerodenoticias = ids.slice(contador,contador+10)
+
+  const noticias = await Promise.all(
+      numerodenoticias.map(id => 
+        fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`).then(response => response.json())
+      )
+  )
+
+  const autores = await Promise.all(
+      noticias.map(noticia => {if (noticia.by){
+        return fetch(`https://hacker-news.firebaseio.com/v0/user/${noticia.by}.json`).then(response => response.json())
+      } else {
+        return null;
+      }
+    })
+
+  )
+
+  noticias.forEach((noticia,i) => {
+    const autorInfo = autores[i]
+
+
+    const div = document.createElement("div")
+    div.classList.add("story")
+
+    const score = document.createElement("p");
+    score.textContent = `Score: ${noticia.score}`;
+
+    const autor = document.createElement("a")
+    autor.textContent = `Autor: ${autorInfo.id}`
+   
+    const a = document.createElement("a");
+    a.textContent = noticia.title;
+    a.href = noticia.url;
+
+
+    const skibidi = document.createElement("p")
+    skibidi.textContent = "Numero Comentarios: " + noticia.kids.length
+
+    console.log(skibidi)
+
+    div.appendChild(a)
+    div.appendChild(score)
+    div.appendChild(autor)
+    div.appendChild(skibidi)  
+  
+
+    stories.appendChild(div)
+  })
+
 }
   
