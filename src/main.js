@@ -27,7 +27,7 @@ function hideLoader() {
   if(loader){
     loader.remove()
   }
-}
+} 
 
 function pressButon() {
   let botoninstorage = localStorage.getItem("selecttype")
@@ -40,6 +40,8 @@ function pressButon() {
   })
 }
 
+
+
 botones.forEach((element) => {
   element.addEventListener("click", () => {
     botones.forEach((element) => {
@@ -48,6 +50,7 @@ botones.forEach((element) => {
     element.classList.add("activado")
     selectType = pickType(element.textContent);
     localStorage.setItem("selecttype", selectType)
+    history.pushState({},"",selectType)
     ponerHistorias()
   })
 })
@@ -74,6 +77,9 @@ siguiente.addEventListener(("click"), () => {
 })
 
 anterior.addEventListener(("click"), () => {
+  if (pagina == 1){
+    return
+  }
   contador = contador - 10;
   pagina--;
   numeropagina.textContent = pagina
@@ -136,7 +142,7 @@ async function ponerHistorias() {
 
 
 
-    const skibidi = document.createElement("p")
+    const skibidi = document.createElement("a")
     skibidi.textContent = "Numero Comentarios: " + (noticia.kids?.length || 0)
     skibidi.addEventListener("click", () => {
       ponerComentarios(noticia.title, noticia.kids)
@@ -146,26 +152,25 @@ async function ponerHistorias() {
 
     time.textContent = "Time " + formaterTime(noticia.time)
 
+
     hideLoader()
+    const divdecontenido = document.createElement("div")
+    divdecontenido.classList.add("contenido")
+
+    
+    divdecontenido.appendChild(score)
+    divdecontenido.appendChild(autor)
+    divdecontenido.appendChild(skibidi)
+    divdecontenido.appendChild(time)
+
 
     div.appendChild(a)
-    div.appendChild(score)
-    div.appendChild(autor)
-    div.appendChild(skibidi)
-    div.appendChild(time)
+    div.appendChild(divdecontenido)
 
 
     stories.appendChild(div)
   })
 
-}
-
-function formaterTime(time) {
-  let date = new Date(time * 1000)
-  let hours = date.getHours()
-  let minutes = "0" + date.getMinutes();
-  let formatedTime = hours + ":" + minutes.slice(-2)
-  return formatedTime
 }
 
 async function ponerComentarios(noticia, kids) {
@@ -221,23 +226,18 @@ async function ponerComentarios(noticia, kids) {
   stories.appendChild(button)
 }
 
-function loadLocalSelect() {
-  let aaa = localStorage.getItem("selecttype")
-
-  return aaa
-}
-
 
 function ponerDatosDelAutor(autor) {
 
   showLoader()
 
   const div = document.createElement("div")
+  div.classList.add("story")
   div.textContent = "User: " + autor.id
-
+  
 
   const fecha = document.createElement("p")
-  fecha.textContent = "Created: " + formaterTime(autor.created)
+  fecha.textContent = "Created: " + formatedDate(autor.created)
 
   const karma = document.createElement("p")
   karma.textContent = "Karma: " + autor.karma
@@ -273,6 +273,60 @@ function convertidor(frase){
   console.log(textolimpio)
 
   return textolimpio
+}
+
+
+function loadLocalSelect() {
+  let aaa = localStorage.getItem("selecttype")
+
+  return aaa
+}
+
+
+function formatedDate(fecha) {
+   let date = new Date(fecha * 1000)
+   let mm = String(date.getUTCMonth()+1).padStart(2,'0');
+   let dd = String(date.getUTCDate()).padStart(2,'0');
+   let yy = String(date.getUTCFullYear());
+   dd = Number(dd)
+   mm = Number(mm)
+   let month = pickMonth(mm)
+   console.log(month  + " " + dd + " " +yy)
+   return `${month} ${dd} ${yy}`
+}
+
+function pickMonth(month ) {
+  month = month - 1
+let months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December"
+];
+
+  for(index = 0; index < months.length; index++){
+    if(index == month) {
+      return months[index]
+    }
+  }
+}
+
+
+
+function formaterTime(time) {
+  let date = new Date(time * 1000)
+  let hours = date.getHours()
+  let minutes = "0" + date.getMinutes();
+  let formatedTime = hours + ":" + minutes.slice(-2)
+  return formatedTime
 }
 
 setInterval(async () => {
