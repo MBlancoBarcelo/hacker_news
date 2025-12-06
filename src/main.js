@@ -12,6 +12,23 @@ let selectType = loadLocalSelect();
 
 numeropagina.textContent = pagina;
 
+function showLoader() {
+  stories.textContent="";
+  let loaderDiv = document.createElement("div")
+  loaderDiv.classList.add("loader-container")
+  let loader = document.createElement("div")
+  loader.classList.add("loader")
+  loaderDiv.appendChild(loader)
+  stories.appendChild(loaderDiv)
+}
+
+function hideLoader() {
+  let loader = document.querySelector(".loader-container")
+  if(loader){
+    loader.remove()
+  }
+}
+
 function pressButon() {
   let botoninstorage = localStorage.getItem("selecttype")
 
@@ -72,7 +89,7 @@ async function pillarHistorias() {
 
 
 async function ponerHistorias() {
-  stories.textContent = ""
+  showLoader()
 
   idsnoticias = await pillarHistorias()
 
@@ -129,7 +146,7 @@ async function ponerHistorias() {
 
     time.textContent = "Time " + formaterTime(noticia.time)
 
-    console.log(skibidi)
+    hideLoader()
 
     div.appendChild(a)
     div.appendChild(score)
@@ -161,7 +178,7 @@ async function ponerComentarios(noticia, kids) {
     comentariosIds.push(element)
   }
 
-  stories.textContent = ""
+  showLoader()
 
   const texto = document.createElement("div")
   texto.textContent = noticia
@@ -184,7 +201,7 @@ async function ponerComentarios(noticia, kids) {
       ponerComentarios(comentario.text, comentario.kids)
     })
 
-
+    hideLoader()
 
     div.appendChild(p)
     div.appendChild(a)
@@ -213,7 +230,7 @@ function loadLocalSelect() {
 
 function ponerDatosDelAutor(autor) {
 
-  stories.textContent = ""
+  showLoader()
 
   const div = document.createElement("div")
   div.textContent = "User: " + autor.id
@@ -234,7 +251,7 @@ function ponerDatosDelAutor(autor) {
     about.textContent = "About:"
   }
 
-
+  hideLoader()
 
   console.log(autor.about)
 
@@ -263,5 +280,4 @@ setInterval(async () => {
   if (JSON.stringify(ids) !== JSON.stringify(idsnoticias)){
     ponerHistorias()
   }
-  console.log("Se esta interveleando")
 },300000);
