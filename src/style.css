@@ -48,6 +48,10 @@ body{
   border-radius: 4pc;
 }
 
+#more{
+  display: flex;
+  justify-content: center;
+}
 
 .botones{
   height: 5vh;
